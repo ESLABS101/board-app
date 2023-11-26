@@ -3,7 +3,7 @@ import { Popover } from 'react-bootstrap';
 import { BsCCircle, BsSquare, BsStickiesFill } from 'react-icons/bs';
 import { DrawingColors } from "../../utils/DrawingColor";
 
-const CustomStickyPopover = ({ setSelectedColor, handleAddNote }) => {
+const CustomStickyPopover = ({ setSelectedColor}) => {
 
   const [selectedShape, setSelectedShape] = useState(null);
 
@@ -31,7 +31,6 @@ const CustomStickyPopover = ({ setSelectedColor, handleAddNote }) => {
         <div style={{ display: 'flex' }}>
           <div
             onClick={() => {
-              handleAddNote(200, 300, 'Rectangle');
               setSelectedShape('Rectangle');
             }}
             style={{
@@ -48,7 +47,6 @@ const CustomStickyPopover = ({ setSelectedColor, handleAddNote }) => {
           </div>
           <div
             onClick={() => {
-              handleAddNote(200, 200, 'circle');
               setSelectedShape('circle');
             }}
             style={{
@@ -65,7 +63,6 @@ const CustomStickyPopover = ({ setSelectedColor, handleAddNote }) => {
           </div>
           <div
             onClick={() => {
-              handleAddNote(200, 200, 'square');
               setSelectedShape('square');
             }}
             style={{
