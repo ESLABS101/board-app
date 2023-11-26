@@ -11,3 +11,12 @@ Task Instructions: Implement the stiky feature in whiteboard app
   1. customStickyPopover.js
 ### working video
 [video link](https://drive.google.com/file/d/1--vI3fqw9IRb8qdhE5prQm5b1BzsDumn/view?usp=sharing)
+
+## :hammer_and_wrench: how to run
+Clone down this repository. You will need ```node.js``` and ```git``` installed globally on your machine.  
+In the project directory, you can run: <br>
+1. ```npm install or npm i```
+2. ```npm run start```  
+
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.  
+**Note:** The page will reload if you make edits.You may also see any lint errors in the console.
