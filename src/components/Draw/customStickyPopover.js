@@ -10,25 +10,37 @@ const CustomStickyPopover = ({ setSelectedColor}) => {
   return (
     <Popover id="popover-basic">
       <Popover.Body>
-        <div style={{ display: 'flex' }}>
+        {/* grid template with 2 column as like https://miro.com/*/}
+        <div style={{ display : 'grid', gridTemplateColumns : '1fr 1fr', gap : '10px'}}>
           {DrawingColors.map((color) => (
             <div
               key={color.color}
               onClick={() => setSelectedColor(color.color)}
+              // hover effect mouse in 
+              onMouseEnter={(e) => {
+                // inlarge box shadow
+                e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 1)';
+              }}
+              // hover effect mouse out
+              onMouseLeave={(e) => {
+                e.target.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.2)';
+              }}
               style={{
                 backgroundColor: color.color,
-                borderRadius: '50%',
-                width: '24px',
-                height: '24px',
+                width: '30px',
+                height: '30px',
                 margin: '6px',
                 cursor: 'pointer',
-                boxShadow: selectedShape === color.color ? '0 0 0 2px #000' : 'none',
+                // created box shawdow more natural 
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                // smooth transition
+                transition: 'box-shadow 0.3s ease',
               }}
               title={color.title}
             ></div>
           ))}
         </div>
-        <div style={{ display: 'flex' }}>
+        {/* <div style={{ display: 'flex' }}>
           <div
             onClick={() => {
               setSelectedShape('Rectangle');
@@ -77,7 +89,7 @@ const CustomStickyPopover = ({ setSelectedColor}) => {
           >
             <BsSquare style={{ cursor: 'pointer' }} />
           </div>
-        </div>
+        </div> */}
       </Popover.Body>
     </Popover>
   );
