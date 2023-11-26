@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef} from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
@@ -181,6 +181,7 @@ const DrawingArea = () => {
     const pos = e.target.getStage().getPointerPosition();
 
     if (selectedTool === "line") {
+      console.log("line");
       const newLine = {
         points: [pos.x, pos.y],
         line: true,
@@ -251,6 +252,13 @@ const DrawingArea = () => {
         const position = stage.getPointerPosition();
         setNewTextPosition(position);
       }
+    }
+    // check if the selectedTool is stickyNotes
+    else if (selectedTool === "stickyNotes") {
+      // calling the handleAddNote function to add a sticky note
+      handleAddNote(pos.x, pos.y, 200, 300, "Rectangle");
+      // reset the selectedTool so user can draw another sticky note
+      setSelectedTool("");
     }
   };
   // Functions calling when the mouse move on the board for start draawing
@@ -575,12 +583,13 @@ const DrawingArea = () => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = (w, h, shape) => {
+  // function for creating sticky notes
+  const handleAddNote = (x, y, w, h, shape) => {
     setNotes([
       ...notes,
       {
-        x: 100,
-        y: 100,
+        x: x,
+        y: y,
         width: w,
         height: h,
         shape: shape,
@@ -675,7 +684,8 @@ const DrawingArea = () => {
                 rootClose={true}
               >
                 <div
-                  // onClick={() => handleAddNote(200, 300,shape)}
+                  // setting the tool for stickynotes
+                  onClick={() => setSelectedTool("stickyNotes")}
                   style={{ padding: "12px" }}
                 >
                   <BsStickyFill />
@@ -689,7 +699,6 @@ const DrawingArea = () => {
                 <BsEraser size={20} color="blue" />
               </div>
 
-             
               <div
                 variant="light"
                 onClick={() => setSelectedTool("brush")}
@@ -697,7 +706,7 @@ const DrawingArea = () => {
               >
                 <BiBrush size={20} />
               </div>
-              
+
               <div
                 onClick={() => setSelectedTool("rectangle")}
                 style={{ padding: "12px" }}
