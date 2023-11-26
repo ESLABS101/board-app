@@ -697,13 +697,7 @@ const DrawingArea = () => {
               >
                 <BiBrush size={20} />
               </div>
-              <div
-                style={{ padding: "12px" }}
-                onClick={() => setStickyShow(!stickyShow)}
-              >
-                <BsStickyFill />
-              </div>
-
+              
               <div
                 onClick={() => setSelectedTool("rectangle")}
                 style={{ padding: "12px" }}
