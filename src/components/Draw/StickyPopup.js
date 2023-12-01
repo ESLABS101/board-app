@@ -20,6 +20,7 @@ function StickyPopup({
   handleText,
   onIncreaseFontSize,
   onDecreaseFontSize,
+  onDelete,
   onBorderChange,
   onItalicChange,
   onTextAlignChange,
@@ -45,7 +46,7 @@ function StickyPopup({
             <i className="fa fa-pencil" onClick={handleText}></i>
           </span>
           <span>
-            <i className="fa fa-trash" onClick={onBorderChange}></i>
+            <i className="fa fa-trash" onClick={onDelete}></i>
           </span>
           <span>
           <i class="fa-sharp fa-regular fa-rectangle"></i>

@@ -251,6 +251,10 @@ const DrawingArea = () => {
         const position = stage.getPointerPosition();
         setNewTextPosition(position);
       }
+    } 
+    else if (selectedTool === "stickyNotes") {
+      handleAddNote(pos.x, pos.y, 200, 300, shape);
+      setSelectedTool("");
     }
   };
   // Functions calling when the mouse move on the board for start draawing
@@ -575,12 +579,12 @@ const DrawingArea = () => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = (w, h, shape) => {
+  const handleAddNote = (x, y, w, h, shape) => {
     setNotes([
       ...notes,
       {
-        x: 100,
-        y: 100,
+        x: x,
+        y: y,
         width: w,
         height: h,
         shape: shape,
@@ -599,6 +603,7 @@ const DrawingArea = () => {
   };
   // For delete the sticky notes
   const handleNoteDelete = (index) => {
+    console.log("2nd "+index)
     const updatedNotes = [...notes];
     updatedNotes.splice(index, 1);
     setNotes(updatedNotes);
@@ -675,7 +680,7 @@ const DrawingArea = () => {
                 rootClose={true}
               >
                 <div
-                  // onClick={() => handleAddNote(200, 300,shape)}
+                  onClick={() => setSelectedTool("stickyNotes")}
                   style={{ padding: "12px" }}
                 >
                   <BsStickyFill />
