@@ -192,6 +192,7 @@ const Sticky = ({
             onFontWeight={handleFontWightChange}
             fontFamily={handleFontFamily}
             onTextDecoration={()=>setTextUnderline(!textUnderline)}
+            onDelete={onDelete}
           />
         )}
         {textWriting && (
