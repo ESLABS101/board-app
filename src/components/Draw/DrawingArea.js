@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef} from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
@@ -18,14 +18,13 @@ import { FaRedo, FaUndoAlt } from "react-icons/fa";
 import { HiOutlinePhotograph } from "react-icons/hi";
 import { VscCircle } from "react-icons/vsc";
 import { usePen } from "./hooks/usePen";
-
 import { HuePicker } from "react-color";
 import Sticky from "./Sticky";
 import DrawerHeader from "./drawerHeader";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import CustomPopover from "./popover";
-import CustomStickyPopover from "./customStickyPopover";
+import CustomStickyNote from "./CustomStickyNote";
 import Pen from "./pen";
 import { useText } from "./hooks/useText";
 import { useSticky } from "./hooks/useSticky";
@@ -39,7 +38,7 @@ const DrawingArea = () => {
   const stageRef = useRef(null);
   // hooks for stroing different tools in the array
   const [draw, setDraw] = useState([]);
-  const [shape, setShape] = useState("Rectangle");
+  const [shape, setShape] = useState("square");
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedTextIndex, setSelectedTextIndex] = useState(null);
 
@@ -180,7 +179,15 @@ const DrawingArea = () => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
 
-    if (selectedTool === "line") {
+    // check if the selectedTool is stickyNotes
+     if (selectedTool === "stickyNotes") {
+      // calling the handleAddNote function to add a sticky note
+      handleAddNote(pos.x, pos.y, 100, 100, "square");
+      // reset the selectedTool 
+      setSelectedTool("");
+    }
+    else if (selectedTool === "line") {
+      console.log("line");
       const newLine = {
         points: [pos.x, pos.y],
         line: true,
@@ -575,12 +582,13 @@ const DrawingArea = () => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = (w, h, shape) => {
+  // function for creating sticky notes
+  const handleAddNote = (x, y, w, h, shape) => {
     setNotes([
       ...notes,
       {
-        x: 100,
-        y: 100,
+        x: x,
+        y: y,
         width: w,
         height: h,
         shape: shape,
@@ -668,14 +676,15 @@ const DrawingArea = () => {
               <OverlayTrigger
                 trigger="click"
                 placement="right"
-                overlay={CustomStickyPopover({
+                overlay={CustomStickyNote({
                   setSelectedColor,
                   handleAddNote,
                 })}
                 rootClose={true}
               >
                 <div
-                  // onClick={() => handleAddNote(200, 300,shape)}
+                  // setting the tool for stickynotes
+                  onClick={() => setSelectedTool("stickyNotes")}
                   style={{ padding: "12px" }}
                 >
                   <BsStickyFill />
@@ -689,19 +698,12 @@ const DrawingArea = () => {
                 <BsEraser size={20} color="blue" />
               </div>
 
-             
               <div
                 variant="light"
                 onClick={() => setSelectedTool("brush")}
                 style={{ padding: "12px" }}
               >
                 <BiBrush size={20} />
-              </div>
-              <div
-                style={{ padding: "12px" }}
-                onClick={() => setStickyShow(!stickyShow)}
-              >
-                <BsStickyFill />
               </div>
 
               <div
