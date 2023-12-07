@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
@@ -256,10 +256,14 @@ const DrawingArea = () => {
     }
     else if (selectedTool === "sticky"){
       setNotePosition(pos);
-      handleAddNote();
+      
       setSelectedTool("");
     }
   };
+
+  useEffect(()=>{
+    handleAddNote();
+  },[notePosition])
   // Functions calling when the mouse move on the board for start draawing
   const handleMouseMove = (e) => {
     if (!isDrawing.current) {
