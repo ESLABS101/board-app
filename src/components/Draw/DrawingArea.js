@@ -43,6 +43,8 @@ const DrawingArea = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedTextIndex, setSelectedTextIndex] = useState(null);
 
+  const [notePosition, setNotePosition] = useState({ x: 0, y: 0 });
+
   // Redo hooks
 
   // These hooks for arrow points
@@ -251,6 +253,11 @@ const DrawingArea = () => {
         const position = stage.getPointerPosition();
         setNewTextPosition(position);
       }
+    }
+    else if (selectedTool === "sticky"){
+      setNotePosition(pos);
+      handleAddNote();
+      setSelectedTool("");
     }
   };
   // Functions calling when the mouse move on the board for start draawing
@@ -575,15 +582,26 @@ const DrawingArea = () => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = (w, h, shape) => {
+  const[noteWidth , setNoteWidth] = useState();
+  const[noteHeight , setNoteHeight] = useState();
+  const[noteShape , setNoteShape] = useState("");
+
+  
+   const handleValues=( w , h, shape) =>{
+        setNoteWidth(w);
+        setNoteHeight(h);
+        setNoteShape(shape);
+   }
+
+  const handleAddNote =()=> {
     setNotes([
       ...notes,
       {
-        x: 100,
-        y: 100,
-        width: w,
-        height: h,
-        shape: shape,
+        x: notePosition.x,
+        y: notePosition.y,
+        width: noteWidth,
+        height: noteHeight,
+        shape: noteShape,
         text: inputText,
         draggable: true,
         color: selectedColor,
@@ -670,12 +688,15 @@ const DrawingArea = () => {
                 placement="right"
                 overlay={CustomStickyPopover({
                   setSelectedColor,
-                  handleAddNote,
+                  handleValues,
+                  // handleAddNote,
                 })}
                 rootClose={true}
               >
                 <div
                   // onClick={() => handleAddNote(200, 300,shape)}
+
+                  onClick={()=>setSelectedTool("sticky")}
                   style={{ padding: "12px" }}
                 >
                   <BsStickyFill />
