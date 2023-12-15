@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
@@ -43,6 +43,8 @@ const DrawingArea = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedTextIndex, setSelectedTextIndex] = useState(null);
 
+  // creating a state variable for storing the position of the pointer
+  const [notePosition, setNotePosition] = useState({ x: 0, y: 0 });
   // Redo hooks
 
   // These hooks for arrow points
@@ -251,8 +253,20 @@ const DrawingArea = () => {
         const position = stage.getPointerPosition();
         setNewTextPosition(position);
       }
+      // if the selected tool is selected as sticky
+    } else if (selectedTool === "sticky") {
+      // then sets its position as the pointers position
+      setNotePosition(pos);
+      // now reset the selected tool
+      setSelectedTool("");
     }
   };
+
+  // rerender when the position is updated
+  useEffect(() => {
+    handleAddNote();
+  }, [notePosition])
+
   // Functions calling when the mouse move on the board for start draawing
   const handleMouseMove = (e) => {
     if (!isDrawing.current) {
@@ -273,7 +287,7 @@ const DrawingArea = () => {
         const radius =
           Math.sqrt(
             Math.pow(point.x - lastCircle.x, 2) +
-              Math.pow(point.y - lastCircle.y, 2)
+            Math.pow(point.y - lastCircle.y, 2)
           ) / 2;
         lastCircle.radius = radius;
         setCircles([...circles]);
@@ -575,15 +589,28 @@ const DrawingArea = () => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = (w, h, shape) => {
+  // creating state variables for storing width,height initially 200px and shape of note
+  const [noteWidth, setNoteWidth] = useState(200);
+  const [noteHeight, setNoteHeight] = useState(200);
+  const [noteShape, setNoteShape] = useState("");
+
+
+  // function for setting up the values
+  const handleValues = (w, h, shape) => {
+    setNoteWidth(w);
+    setNoteHeight(h);
+    setNoteShape(shape);
+  }
+
+  const handleAddNote = () => {
     setNotes([
       ...notes,
       {
-        x: 100,
-        y: 100,
-        width: w,
-        height: h,
-        shape: shape,
+        x: notePosition.x,
+        y: notePosition.y,
+        width: noteWidth,
+        height: noteHeight,
+        shape: noteShape,
         text: inputText,
         draggable: true,
         color: selectedColor,
@@ -670,12 +697,13 @@ const DrawingArea = () => {
                 placement="right"
                 overlay={CustomStickyPopover({
                   setSelectedColor,
-                  handleAddNote,
+                  handleValues,
                 })}
                 rootClose={true}
               >
                 <div
                   // onClick={() => handleAddNote(200, 300,shape)}
+                  onClick={() => setSelectedTool("sticky")}
                   style={{ padding: "12px" }}
                 >
                   <BsStickyFill />
@@ -689,7 +717,7 @@ const DrawingArea = () => {
                 <BsEraser size={20} color="blue" />
               </div>
 
-             
+
               <div
                 variant="light"
                 onClick={() => setSelectedTool("brush")}
@@ -802,12 +830,12 @@ const DrawingArea = () => {
                     line.line
                       ? line.ref
                       : line.line2
-                      ? lineRef2.current
-                      : line.line3
-                      ? lineRef3.current
-                      : selectedTool === "brush"
-                      ? brushRef.current
-                      : null
+                        ? lineRef2.current
+                        : line.line3
+                          ? lineRef3.current
+                          : selectedTool === "brush"
+                            ? brushRef.current
+                            : null
                   }
                 />
               ))}
