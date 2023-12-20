@@ -6,4 +6,3 @@ Task Instructions: Implement the stiky feature in whiteboard app
 4. after implementing the feature create a repo and push your code on it also attach the working video of the project on your readme 
 
 
-5. video link - https://www.loom.com/share/326e1e20a3b44fd79df30d03f339bb00?sid=c0a76d33-eaa8-4ddb-90dc-ed665061e58f
