@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
@@ -38,6 +38,7 @@ import { useArrow } from "./hooks/useArrow";
 const DrawingArea = () => {
   const stageRef = useRef(null);
   // hooks for stroing different tools in the array
+  const [notePostn, setNotePostn] = useState({ x: 0, y: 0 });
   const [draw, setDraw] = useState([]);
   const [shape, setShape] = useState("Rectangle");
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -205,6 +206,11 @@ const DrawingArea = () => {
         ...draw,
         { x: pos.x, y: pos.y, width: 0, height: 0, color: rectangleColor },
       ]);
+    } else if (selectedTool === "sticky") {
+      setNotePostn(pos);
+
+      setSelectedTool("");
+
     } else if (selectedTool === "brush") {
       const newBrushLine = {
         points: [pos.x, pos.y],
@@ -253,6 +259,10 @@ const DrawingArea = () => {
       }
     }
   };
+
+  useEffect(() => {
+    handleAddNote();
+  }, [notePostn]);
   // Functions calling when the mouse move on the board for start draawing
   const handleMouseMove = (e) => {
     if (!isDrawing.current) {
@@ -273,7 +283,7 @@ const DrawingArea = () => {
         const radius =
           Math.sqrt(
             Math.pow(point.x - lastCircle.x, 2) +
-              Math.pow(point.y - lastCircle.y, 2)
+            Math.pow(point.y - lastCircle.y, 2)
           ) / 2;
         lastCircle.radius = radius;
         setCircles([...circles]);
@@ -320,6 +330,7 @@ const DrawingArea = () => {
       setEndY(point.y);
     }
   };
+
   //  // Functions calling when the mouse not click and start stop drawing
   const handleMouseUp = (e) => {
     isDrawing.current = false;
@@ -477,6 +488,47 @@ const DrawingArea = () => {
     }
   };
 
+  // Function for Sticky Note
+  const [note, setNote] = useState(
+    JSON.parse(localStorage.getItem("notes")) || []
+  );
+
+  const addNote = (color) => {
+    const tempNotes = [...note];
+
+    tempNotes.push({
+      id: Date.now() + "" + Math.floor(Math.random() * 78),
+      text: "",
+      time: Date.now(),
+      color,
+    });
+    setNotes(tempNotes);
+  };
+
+  const deleteNote = (id) => {
+    const tempNotes = [...note];
+
+    const index = tempNotes.findIndex((item) => item.id === id);
+    if (index < 0) return;
+
+    tempNotes.splice(index, 1);
+    setNote(tempNotes);
+  };
+
+  const updateText = (text, id) => {
+    const tempNotes = [...note];
+
+    const index = tempNotes.findIndex((item) => item.id === id);
+    if (index < 0) return;
+
+    tempNotes[index].text = text;
+    setNotes(tempNotes);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("notes", JSON.stringify(note));
+  }, [note]);
+
   // Functions for clearing the board
   const handleClear = () => {
     setLines([]);
@@ -564,6 +616,16 @@ const DrawingArea = () => {
 
   // sticky notes
   const [inputText, setInputText] = useState("");
+  const [noteWidth, setNoteWidth] = useState();
+  const [noteHeight, setNoteHeight] = useState();
+  const [noteShape, setNoteShape] = useState("");
+
+
+  const handleValues = (w, h, shape) => {
+    setNoteWidth(w);
+    setNoteHeight(h);
+    setNoteShape(shape);
+  }
   const handleNoteSelect = (index) => {
     setSelectedIndex(index);
   };
@@ -575,15 +637,19 @@ const DrawingArea = () => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = (w, h, shape) => {
+  const handleAddNote = () => {
+
+    //   const textWidth = 200 + Math.min(inputText.length * 8, 400);
+    // const textHeight = 200 + Math.floor(inputText.length / 20) * 20;
+
     setNotes([
       ...notes,
       {
-        x: 100,
-        y: 100,
-        width: w,
-        height: h,
-        shape: shape,
+        x: notePostn.x,
+        y: notePostn.y,
+        width: noteWidth,
+        height: noteHeight,
+        shape: noteShape,
         text: inputText,
         draggable: true,
         color: selectedColor,
@@ -595,6 +661,14 @@ const DrawingArea = () => {
   const handleNoteChange = (index, newText) => {
     const updatedNotes = [...notes];
     updatedNotes[index].text = newText;
+    // Calculate the new width and height based on content
+    let newWidth = 200 + Math.min(newText.length , 400);
+    let newHeight = 200 + Math.floor(newText.length / 20) * 10;
+
+    // Update the note's width and height
+    updatedNotes[index].width = newWidth;
+    updatedNotes[index].height = newHeight;
+
     setNotes(updatedNotes);
   };
   // For delete the sticky notes
@@ -630,6 +704,8 @@ const DrawingArea = () => {
                 flexDirection: "row",
                 flexWrap: "wrap",
                 paddingTop: "20px",
+                width: "200px",
+                height: " 200px",
               }}
             >
               {" "}
@@ -670,12 +746,15 @@ const DrawingArea = () => {
                 placement="right"
                 overlay={CustomStickyPopover({
                   setSelectedColor,
-                  handleAddNote,
+                  // handleAddNote,
+                  handleValues,
                 })}
                 rootClose={true}
               >
                 <div
                   // onClick={() => handleAddNote(200, 300,shape)}
+                  onClick={() => setSelectedTool("sticky")}
+
                   style={{ padding: "12px" }}
                 >
                   <BsStickyFill />
@@ -689,7 +768,7 @@ const DrawingArea = () => {
                 <BsEraser size={20} color="blue" />
               </div>
 
-             
+
               <div
                 variant="light"
                 onClick={() => setSelectedTool("brush")}
@@ -802,12 +881,12 @@ const DrawingArea = () => {
                     line.line
                       ? line.ref
                       : line.line2
-                      ? lineRef2.current
-                      : line.line3
-                      ? lineRef3.current
-                      : selectedTool === "brush"
-                      ? brushRef.current
-                      : null
+                        ? lineRef2.current
+                        : line.line3
+                          ? lineRef3.current
+                          : selectedTool === "brush"
+                            ? brushRef.current
+                            : null
                   }
                 />
               ))}
