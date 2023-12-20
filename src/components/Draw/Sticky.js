@@ -43,7 +43,19 @@ const Sticky = ({
     fontStyle: "normal",
     // align: "center"
   });
+  const [content, setContent] = useState(text);
 
+
+  useEffect(() => {
+    // Update the content state when the text prop changes
+    setContent(text);
+  }, [text]);
+
+  const handleTextChange = (e) => {
+    const newText = e.target.value;
+    setContent(newText);
+     // Notify the parent component about the text change
+  };
   const handleTextAlignChange = (align) => {
     console.log(align);
     setTextAlign(align);
@@ -66,6 +78,21 @@ const Sticky = ({
     // }));
     setItalic(!italic);
   };
+
+  // Dynamically adjust width and height based on content length
+  // const width = 200 + Math.min(text.length * 8, 400);
+  // const height = 200 + Math.floor(text.length / 20) * 20;
+
+  const handleContentChange = (newText) => {
+    // Dynamically adjust width and height based on content length
+    const newWidth = 200 + Math.min(newText.length * 8, 400);
+    const newHeight = 200 + Math.floor(newText.length / 20) * 20;
+
+    // Notify the parent component about the changes in content and size
+    onChange(newText, newWidth, newHeight);
+    setContent(newText);
+  };
+
 
   const handleIncreaseFontSize = () => {
     setFontSize((prevFontSize) => prevFontSize + 2);
@@ -124,6 +151,8 @@ const Sticky = ({
             onDragEnd={handleDragEnd}
             onClick={handleSelect}
             ref={shapeRef}
+            value={content}
+            onChange={handleTextChange}
           />
         )}
         {shape === "circle" && (
@@ -138,6 +167,8 @@ const Sticky = ({
             onDragEnd={handleDragEnd}
             onClick={handleSelect}
             ref={shapeRef}
+            value={content}
+            onChange={handleTextChange}
           />
         )}
 
@@ -146,7 +177,7 @@ const Sticky = ({
             x={x}
             y={y}
             width={width}
-            height={width}
+            height={height}
             fill={stickyColor}
             stroke="#999966"
             strokeWidth={4}
@@ -155,12 +186,14 @@ const Sticky = ({
             onDragEnd={handleDragEnd}
             onClick={handleSelect}
             ref={shapeRef}
+            value={content}
+            onChange={handleTextChange}
           />
         )}
         <Text
           x={x + 10}
           y={y + 10}
-          width={width - 20}
+          width={width -20 }
           height={height - 20}
           onClick={onSelectText}
           // text={text}
@@ -175,6 +208,8 @@ const Sticky = ({
           {...stickyStyle}
           // onDblClick={onChange}
           ref={textRef}
+          value={content}
+          onChange={handleContentChange}
         />
 
         {isText && (
@@ -203,7 +238,7 @@ const Sticky = ({
             width={width}
             height={height}
             isEditing={textWriting}
-            onChange={onChange}
+            onChange={handleContentChange}
             fontSize={fontSize}
             italic={italic}
             textAlign={textAlign}
