@@ -5,4 +5,4 @@ Task Instructions: Implement the stiky feature in whiteboard app
 3. and then implement the same feature in the shared whiteboard code and 
 4. after implementing the feature create a repo and push your code on it also attach the working video of the project on your readme 
 
-![video link](https://drive.google.com/file/d/1M13e1o8ONMeA4cUVHle61gxv2yg-gUME/view?usp=sharing)
+[video link](https://drive.google.com/file/d/1M13e1o8ONMeA4cUVHle61gxv2yg-gUME/view?usp=sharing)
